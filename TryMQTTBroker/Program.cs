@@ -14,7 +14,9 @@ using System.Text;
 
 var mqttFactory = new MqttFactory();
 
-var mqttServerOptions = mqttFactory.CreateServerOptionsBuilder().WithDefaultEndpoint().Build();
+var mqttServerOptions = mqttFactory.CreateServerOptionsBuilder()
+    .WithDefaultEndpoint()
+    .Build();
 
 var server = mqttFactory.CreateMqttServer(mqttServerOptions);
 
@@ -24,12 +26,17 @@ server.ClientConnectedAsync += e =>
     return Task.CompletedTask;
 };
 
-server.LoadingRetainedMessageAsync += e =>
+/*server.LoadingRetainedMessageAsync += e =>
 {
     Console.WriteLine("got msg");
     return Task.CompletedTask;
-};
+};*/
 
+server.InterceptingPublishAsync += e =>
+{
+    Console.WriteLine("Got MSG");
+    return Task.CompletedTask;
+};
 
 await server.StartAsync();
 
