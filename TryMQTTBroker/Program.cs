@@ -6,40 +6,61 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-using Microsoft.VisualBasic;
 using MQTTnet;
 using MQTTnet.Server;
 using System.Text;
 
 
-var mqttFactory = new MqttFactory();
+class BrokerServer {
 
-var mqttServerOptions = mqttFactory.CreateServerOptionsBuilder()
-    .WithDefaultEndpoint()
-    .Build();
+    private MqttServer mqttServer;
 
-var server = mqttFactory.CreateMqttServer(mqttServerOptions);
+    private string payload;
 
-server.ClientConnectedAsync += e =>
-{
-    Console.WriteLine("Client Connected");
-    return Task.CompletedTask;
-};
+    public string Payload
+    {
+        get { return payload; }
+    }
 
-/*server.LoadingRetainedMessageAsync += e =>
-{
-    Console.WriteLine("got msg");
-    return Task.CompletedTask;
-};*/
+    public BrokerServer()
+    {
+        payload = "";
 
-server.InterceptingPublishAsync += e =>
-{
-    Console.WriteLine("Got MSG");
-    return Task.CompletedTask;
-};
+        var mqttFactory = new MqttFactory();
 
-await server.StartAsync();
+        var mqttServerOptions = mqttFactory.CreateServerOptionsBuilder()
+            .WithDefaultEndpoint()
+            .Build();
 
-Console.WriteLine("Server started");
-Console.ReadLine();
+        mqttServer = mqttFactory.CreateMqttServer(mqttServerOptions);
+
+        mqttServer.ClientConnectedAsync += ClientConnect;
+
+        mqttServer.InterceptingPublishAsync += RecMSG;
+
+        mqttServer.StartAsync();
+        Console.WriteLine("Server Started");
+    }
+
+    private Task ClientConnect(ClientConnectedEventArgs args)
+    {
+        Console.WriteLine("Client Connected");
+        return Task.CompletedTask;
+    }
+
+    private Task RecMSG(InterceptingPublishEventArgs args)
+    {
+        payload = Encoding.UTF8.GetString(args.ApplicationMessage?.Payload);
+        Console.WriteLine("msg: " + payload);
+        return Task.CompletedTask;
+    }
+    
+    public void Close()
+    {
+        var task = mqttServer.StopAsync();
+        task.Wait();
+        Console.WriteLine("Close Server");
+    }
+
+}
 
