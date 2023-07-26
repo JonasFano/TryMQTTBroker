@@ -6,6 +6,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
+using Microsoft.VisualBasic;
 using MQTTnet;
 using MQTTnet.Server;
 using System.Text;
@@ -22,6 +23,13 @@ server.ClientConnectedAsync += e =>
     Console.WriteLine("Client Connected");
     return Task.CompletedTask;
 };
+
+server.LoadingRetainedMessageAsync += e =>
+{
+    Console.WriteLine("got msg");
+    return Task.CompletedTask;
+};
+
 
 await server.StartAsync();
 
