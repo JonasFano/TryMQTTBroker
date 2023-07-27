@@ -10,8 +10,13 @@ class Client
     {
         var mqttFactory = new MqttFactory();
         mqttClient = mqttFactory.CreateMqttClient();
-        // Use builder classes where possible in this project.
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("localhost").Build();
+
+        Connect();
+    }
+
+    public void Connect()
+    {
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.147").Build();
 
         while (true)
         {
