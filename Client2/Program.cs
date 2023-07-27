@@ -10,13 +10,8 @@ class Client
     {
         var mqttFactory = new MqttFactory();
         mqttClient = mqttFactory.CreateMqttClient();
-
-        Connect();
-    }
-
-    private void Connect()
-    {
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.147").Build();
+        // Use builder classes where possible in this project.
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("localhost").Build();
 
         while (true)
         {
@@ -45,7 +40,7 @@ class Client
     public void SendMSG(string msg)
     {
         var applicationMessage = new MqttApplicationMessageBuilder()
-            .WithTopic("samples/temperature/living_room")
+            .WithTopic("SunriseRC/Current/Text/CartesianFlange")
             .WithPayload(msg)
             .Build();
         try
