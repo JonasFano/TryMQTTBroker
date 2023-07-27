@@ -12,7 +12,7 @@ class Client
 
         mqttClient = mqttFactory.CreateMqttClient();
         // Use builder classes where possible in this project.
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.147").Build();
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("localhost").Build();
 
         var response = mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
         response.Wait();
@@ -30,7 +30,7 @@ class Client
     public void SendMSG(string msg)
     {
         var applicationMessage = new MqttApplicationMessageBuilder()
-            .WithTopic("samples/temperature/living_room")
+            .WithTopic("SunriseRC/Current/Text/CartesianFlange")
             .WithPayload(msg)
             .Build();
 
