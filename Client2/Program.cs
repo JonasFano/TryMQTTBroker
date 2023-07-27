@@ -9,16 +9,31 @@ class Client
     public Client()
     {
         var mqttFactory = new MqttFactory();
-
         mqttClient = mqttFactory.CreateMqttClient();
-        // Use builder classes where possible in this project.
+
+        Connect();
+    }
+
+    private void Connect()
+    {
         var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.147").Build();
 
-        var response = mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-        response.Wait();
-
-        Console.WriteLine("The MQTT client is connected.");
-        Console.WriteLine(response.Result.ResultCode.ToString());
+        while (true)
+        {
+            try
+            {
+                var response = mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+                response.Wait();
+                Console.WriteLine("The MQTT client is connected.");
+                Console.WriteLine(response.Result.ResultCode.ToString());
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("connection failed");
+            }
+            Task.Delay(100).Wait();
+        }
     }
 
     public void Close()
@@ -33,17 +48,23 @@ class Client
             .WithTopic("samples/temperature/living_room")
             .WithPayload(msg)
             .Build();
-
-        var res = mqttClient?.PublishAsync(applicationMessage, CancellationToken.None);
-        res?.Wait();
-        Console.WriteLine(res?.Result.IsSuccess);
+        try
+        {
+            var res = mqttClient?.PublishAsync(applicationMessage, CancellationToken.None);
+            res?.Wait();
+            Console.WriteLine(res?.Result.IsSuccess);
+        }
+        catch (Exception ex)
+        {
+            Connect();
+        }
     }
 
     public static void Main(string[] args)
     {
         Client client = new Client();
         var rnd = new Random();
-        for (int i = 0; i < 100; i++) {
+        while (true) {
             client.SendMSG("X=" + (rnd.NextDouble() * 100 - 50) + " " + "Y=" + (rnd.NextDouble() * 100 - 50) + " " + "Z=" + (rnd.NextDouble() * 100 - 50));
             Task.Delay(1000).Wait();
         }
