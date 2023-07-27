@@ -44,7 +44,7 @@ class Client
         Client client = new Client();
         var rnd = new Random();
         for (int i = 0; i < 100; i++) {
-            client.SendMSG("X=" + rnd.NextDouble()*100 + " " + "Y=" + rnd.NextDouble() * 100 + " " + "Z=" + rnd.NextDouble() * 100);
+            client.SendMSG("X=" + (rnd.NextDouble() * 100 - 50) + " " + "Y=" + (rnd.NextDouble() * 100 - 50) + " " + "Z=" + (rnd.NextDouble() * 100 - 50));
             Task.Delay(1000).Wait();
         }
 
