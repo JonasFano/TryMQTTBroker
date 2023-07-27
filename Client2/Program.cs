@@ -1,40 +1,53 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
 
-var mqttFactory = new MqttFactory();
 
-using (var mqttClient = mqttFactory.CreateMqttClient())
+class Client
 {
-    var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("localhost").Build();
+    private IMqttClient? mqttClient;
 
-    // Setup message handling before connecting so that queued messages
-    // are also handled properly. When there is no event handler attached all
-    // received messages get lost.
-    mqttClient.ApplicationMessageReceivedAsync += e =>
+    public Client()
     {
-        Console.WriteLine("Received application message.");
-        //e.DumpToConsole();
+        var mqttFactory = new MqttFactory();
 
-        return Task.CompletedTask;
-    };
+        mqttClient = mqttFactory.CreateMqttClient();
+        // Use builder classes where possible in this project.
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.147").Build();
 
-    await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+        var response = mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+        response.Wait();
 
-    var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-        .WithTopicFilter(
-            f =>
-            {
-                f.WithTopic("mqttnet/samples/topic/2");
-            })
-        .Build();
+        Console.WriteLine("The MQTT client is connected.");
+        Console.WriteLine(response.Result.ResultCode.ToString());
+    }
 
-    await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+    public void Close()
+    {
+        var res = mqttClient.DisconnectAsync();
+        res.Wait();
+    }
 
-    Console.WriteLine("MQTT client subscribed to topic.");
+    public void SendMSG(string msg)
+    {
+        var applicationMessage = new MqttApplicationMessageBuilder()
+            .WithTopic("samples/temperature/living_room")
+            .WithPayload(msg)
+            .Build();
 
-    
+        var res = mqttClient?.PublishAsync(applicationMessage, CancellationToken.None);
+        res?.Wait();
+        Console.WriteLine(res?.Result.IsSuccess);
+    }
 
-    //Console.WriteLine("Press enter to exit.");
-    Console.ReadLine();
-    
+    public static void Main(string[] args)
+    {
+        Client client = new Client();
+        var rnd = new Random();
+        for (int i = 0; i < 100; i++) {
+            client.SendMSG("X=" + rnd.NextDouble()*100 + " " + "Y=" + rnd.NextDouble() * 100 + " " + "Z=" + rnd.NextDouble() * 100);
+            Task.Delay(1000).Wait();
+        }
+
+        client.Close();
+    }
 }
