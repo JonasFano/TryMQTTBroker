@@ -13,7 +13,7 @@ var mqttFactory = new MqttFactory();
 
 var mqttClient = mqttFactory.CreateMqttClient();
 // Use builder classes where possible in this project.
-var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.2.144").Build();
+var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.178.55").Build();
 
 // This will throw an exception if the server is not available.
 // The result from this message returns additional data which was sent 

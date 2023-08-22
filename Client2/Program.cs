@@ -16,7 +16,7 @@ class Client
 
     public void Connect()
     {
-        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("localhost").Build();
+        var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("192.168.178.55").Build();
 
         while (true)
         {
