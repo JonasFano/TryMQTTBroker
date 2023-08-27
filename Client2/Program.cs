@@ -45,7 +45,7 @@ class Client
     public void SendMSG(string msg)
     {
         var applicationMessage = new MqttApplicationMessageBuilder()
-            .WithTopic("SunriseRC/Current/Text/CartesianFlange")
+            .WithTopic("SunriseRC/Current/Text/CartesianMessspitze")
             .WithPayload(msg)
             .Build();
         try
