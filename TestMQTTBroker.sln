@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartBroker", "TryMQTTBroker\StartBroker.csproj", "{95B392A3-C135-45D3-869B-3CD80043DC9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client2", "Client2\Client2.csproj", "{BFE9D4C8-3025-44A8-BD0E-46CB08D0A1DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimulateRobotMessage", "Client2\SimulateRobotMessage.csproj", "{BFE9D4C8-3025-44A8-BD0E-46CB08D0A1DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
